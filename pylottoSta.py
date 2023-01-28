@@ -72,32 +72,46 @@ def db_update_web():
 #%% data science 
 
 # frequency 
-number = list(range(1,46))
-count = np.zeros([1,45])
+def lotto_Freq():
+    global lotto_db
+    number = list(range(1,46))
+    count = np.zeros([1,45])
+    for i in range(1,len(lotto_db)+1):
+        for j in range(0,6):
+            temp = int(lotto_db[str(i)][j])-1
+            count[0][temp] = count[0][temp] + 1 
+    ascending_order = count.argsort()+1
+    print('Most Frequent in all games :' +str( ascending_order[0][39:45]))
+    print('Least Frequent in all games :'+ str( ascending_order[0][0:6]))
+    # frequency for 100 weeks
+    games100 = dict()
+    for i in range(len(lotto_db) - 100 , len(lotto_db)):
+        games100[str(i)] = lotto_db[str(i)]
+    count = np.zeros([1,45])
+    for i in range(len(lotto_db)-100,len(lotto_db)):
+        for j in range(0,6):
+            temp = int(games100[str(i)][j])-1
+            count[0][temp] = count[0][temp] + 1 
+    ascending_order = count.argsort()+1
+    print('Most Frequent in last 100 games :' +str( ascending_order[0][39:45]))
+    print('Least Frequent in last 100 games :'+ str( ascending_order[0][0:6]))
 
-for i in range(1,len(lotto_db)+1):
-    for j in range(0,6):
-        temp = int(lotto_db[str(i)][j])-1
-        count[0][temp] = count[0][temp] + 1 
-
-ascending_order = count.argsort()+1
-print('Most Frequent in all games :' +str( ascending_order[0][39:45]))
-print('Least Frequent in all games :'+ str( ascending_order[0][0:6]))
-
-# frequency for 100 weeks
-games100 = dict()
-for i in range(len(lotto_db) - 100 , len(lotto_db)):
-    games100[str(i)] = lotto_db[str(i)]
-
-count = np.zeros([1,45])
-
-for i in range(len(lotto_db)-100,len(lotto_db)):
-    for j in range(0,6):
-        temp = int(games100[str(i)][j])-1
-        count[0][temp] = count[0][temp] + 1 
-
-ascending_order = count.argsort()+1
-print('Most Frequent in last 100 games :' +str( ascending_order[0][39:45]))
-print('Least Frequent in last 100 games :'+ str( ascending_order[0][0:6]))
-
-# correlation 
+    # correlation 
+def lotto_CoR():
+    CoR = np.zeros([45,45])
+    for ii in range(1, len(lotto_db)):
+        temp = lotto_db[str(ii)]
+        for i in range(0,7):
+            ball = int(temp[i])-1
+            for j in range(0,7):
+                ball2 = int(temp[j])-1
+                if ball != ball2 :
+                    CoR[ball][ball2] = CoR[ball][ball2] +1
+                    CoR[ball2][ball] = CoR[ball][ball2]
+    with open('COR.txt', 'w') as f_COR:
+        for i in range(0,45):        
+            for j in range(0,45):
+                f_COR.write(str(CoR[i][j]))
+                f_COR.write('\t')
+            f_COR.write('\n')
+                
